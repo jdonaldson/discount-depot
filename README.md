@@ -2,6 +2,8 @@
 
 A 3D game inspired by Minecraft, Sonic, Fortnite, and Rocket League.
 
+**[🎮 Play the Demo](https://jdonaldson.github.io/discount-depot/)**
+
 ## Game Concept
 
 Discount Depot combines elements from multiple popular games to create a unique gaming experience:

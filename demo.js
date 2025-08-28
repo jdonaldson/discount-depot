@@ -354,7 +354,7 @@ class RagdollDemo {
         // Keep torso somewhat upright
         const torsoRotation = torso.quaternion;
         const uprightForce = new CANNON.Vec3(0, 0, -torsoRotation.x * 50);
-        torso.applyTorque(uprightForce);
+        torso.torque.vadd(uprightForce, torso.torque);
     }
     
     onWindowResize() {

@@ -12,9 +12,6 @@ class RagdollDemo {
         this.isDragging = false;
         this.dragConstraint = null;
         this.dragBody = null;
-        this.isWalking = false;
-        this.walkStartTime = 0;
-        this.walkDuration = 3000; // 3 seconds
         
         this.init();
         this.animate();
@@ -291,70 +288,7 @@ class RagdollDemo {
                 this.dragConstraint = null;
                 this.dragBody = null;
             }
-            
-            // Start walking when mouse is released
-            this.startWalking();
         }
-    }
-    
-    startWalking() {
-        this.isWalking = true;
-        this.walkStartTime = Date.now();
-        console.log('Character started walking!');
-    }
-    
-    stopWalking() {
-        this.isWalking = false;
-        console.log('Character stopped walking');
-    }
-    
-    updateWalking() {
-        if (!this.isWalking) return;
-        
-        // Check if walking time is up
-        const currentTime = Date.now();
-        if (currentTime - this.walkStartTime > this.walkDuration) {
-            this.stopWalking();
-            return;
-        }
-        
-        // Simple walking animation - apply forces to legs alternately
-        const walkTime = (currentTime - this.walkStartTime) / 1000; // in seconds
-        const walkSpeed = 2; // steps per second
-        const stepPhase = Math.sin(walkTime * walkSpeed * Math.PI);
-        
-        // Get leg bodies
-        const leftThigh = this.ragdoll.bodies.leftThigh;
-        const rightThigh = this.ragdoll.bodies.rightThigh;
-        const leftShin = this.ragdoll.bodies.leftShin;
-        const rightShin = this.ragdoll.bodies.rightShin;
-        const torso = this.ragdoll.bodies.torso;
-        
-        // Apply forward force to torso
-        torso.velocity.x += 0.2;
-        
-        // Alternating leg movement
-        const legForce = 15;
-        const liftForce = 8;
-        
-        if (stepPhase > 0) {
-            // Left leg forward, right leg back
-            leftThigh.applyImpulse(new CANNON.Vec3(legForce, liftForce, 0), new CANNON.Vec3(0, 0, 0));
-            leftShin.applyImpulse(new CANNON.Vec3(legForce * 0.5, 0, 0), new CANNON.Vec3(0, 0, 0));
-            
-            rightThigh.applyImpulse(new CANNON.Vec3(-legForce * 0.3, 0, 0), new CANNON.Vec3(0, 0, 0));
-        } else {
-            // Right leg forward, left leg back
-            rightThigh.applyImpulse(new CANNON.Vec3(legForce, liftForce, 0), new CANNON.Vec3(0, 0, 0));
-            rightShin.applyImpulse(new CANNON.Vec3(legForce * 0.5, 0, 0), new CANNON.Vec3(0, 0, 0));
-            
-            leftThigh.applyImpulse(new CANNON.Vec3(-legForce * 0.3, 0, 0), new CANNON.Vec3(0, 0, 0));
-        }
-        
-        // Keep torso somewhat upright
-        const torsoRotation = torso.quaternion;
-        const uprightForce = new CANNON.Vec3(0, 0, -torsoRotation.x * 50);
-        torso.torque.vadd(uprightForce, torso.torque);
     }
     
     onWindowResize() {
@@ -365,9 +299,6 @@ class RagdollDemo {
     
     animate() {
         requestAnimationFrame(() => this.animate());
-        
-        // Update walking behavior
-        this.updateWalking();
         
         // Step physics
         this.world.step(1/60);

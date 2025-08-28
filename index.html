@@ -23,7 +23,35 @@
             border-radius: 5px;
             font-size: 14px;
             z-index: 100;
+            max-width: 300px;
         }
+        
+        #neural-viz {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 500px;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #444;
+            border-radius: 5px;
+            z-index: 100;
+        }
+        
+        #neural-stats {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-family: monospace;
+            z-index: 100;
+            min-width: 200px;
+        }
+        
         
         canvas {
             display: block;
@@ -32,14 +60,34 @@
 </head>
 <body>
     <div id="info">
-        <h3>Discount Depot Demo</h3>
-        <p>Click and drag the character to interact with ragdoll physics!</p>
-        <p>Camera is fixed - click and drag to move character parts!</p>
+        <h3>Discount Depot - Neural Ragdoll</h3>
+        <p>Neural network learning to stand up!</p>
+        <p><strong>Controls:</strong></p>
+        <p>T - Toggle Training ON/OFF</p>
+        <p>R - Reset Character Position</p>
+        <p>S - Save Neural Network</p>
+        <p>L - Load Neural Network</p>
+        <p>Mouse - Click and drag body parts</p>
     </div>
+    
+    <canvas id="neural-viz"></canvas>
+    
+    <div id="neural-stats">
+        <div>Episode: <span id="episode">0</span></div>
+        <div>Step: <span id="step">0</span></div>
+        <div>Reward: <span id="reward">0.00</span></div>
+        <div>Best Reward: <span id="best-reward">0.00</span></div>
+        <div>Epsilon: <span id="epsilon">0.30</span></div>
+        <div>Torso Height: <span id="torso-height">0.00</span></div>
+        <div>Upright Steps: <span id="upright-steps">0</span></div>
+        <div>Max Upright: <span id="max-upright">0</span></div>
+    </div>
+    
     
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script src="cannon.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="neural-controller.js"></script>
     <script src="demo.js"></script>
 </body>
 </html>

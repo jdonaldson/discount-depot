@@ -7,6 +7,7 @@ class RagdollDemo {
         this.controls = null;
         this.world = null;
         this.ragdoll = null;
+        this.neuralController = null;
         this.mouse = { x: 0, y: 0 };
         this.raycaster = new THREE.Raycaster();
         this.isDragging = false;
@@ -51,12 +52,19 @@ class RagdollDemo {
         // Create ragdoll character
         this.createRagdoll();
         
+        // Initialize neural controller
+        this.neuralController = new NeuralController(this.ragdoll, this.world);
+        this.neuralController.loadNetwork(); // Try to load saved network
+        
         // Setup controls (disabled for character interaction)
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enabled = false; // Keep camera fixed
         
         // Setup event listeners
         this.setupEventListeners();
+        
+        // Setup keyboard controls for neural network
+        this.setupNeuralControls();
         
         // Handle window resize
         window.addEventListener('resize', () => this.onWindowResize());
@@ -175,7 +183,7 @@ class RagdollDemo {
         this.ragdoll.bodies[name] = body;
         this.ragdoll.meshes[name] = mesh;
         
-        // Add some initial random motion for fun
+        // Add some initial random motion
         body.velocity.set(
             (Math.random() - 0.5) * 2,
             Math.random() * 2,
@@ -218,6 +226,30 @@ class RagdollDemo {
         this.renderer.domElement.addEventListener('mousedown', (event) => this.onMouseDown(event));
         this.renderer.domElement.addEventListener('mousemove', (event) => this.onMouseMove(event));
         this.renderer.domElement.addEventListener('mouseup', (event) => this.onMouseUp(event));
+    }
+    
+    setupNeuralControls() {
+        // Keyboard controls for neural network training
+        document.addEventListener('keydown', (event) => {
+            switch(event.key) {
+                case 't':
+                case 'T':
+                    this.neuralController.toggleTraining();
+                    break;
+                case 'r':
+                case 'R':
+                    this.neuralController.reset();
+                    break;
+                case 's':
+                case 'S':
+                    this.neuralController.saveNetwork();
+                    break;
+                case 'l':
+                case 'L':
+                    this.neuralController.loadNetwork();
+                    break;
+            }
+        });
     }
     
     onMouseDown(event) {
@@ -302,6 +334,11 @@ class RagdollDemo {
         
         // Step physics
         this.world.step(1/60);
+        
+        // Update neural controller
+        if (this.neuralController) {
+            this.neuralController.step();
+        }
         
         // Update visual meshes to match physics bodies
         Object.keys(this.ragdoll.bodies).forEach(partName => {
